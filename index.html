@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2歳児のイヤイヤ期対策ガイド</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <style>
+        /* --- RESET & BASE STYLES --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #FFFDE7;
+            color: #37474F;
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* --- LAYOUT --- */
+        .container { max-width: 800px; margin: 0 auto; padding: 0 16px; }
+        .header { background-color: #FF6D00; color: white; padding: 16px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 18px; font-weight: bold; }
+        .section { margin-top: 24px; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } .header-title { font-size: 24px; } }
+
+        /* --- TYPOGRAPHY --- */
+        h2 { font-size: 22px; color: #FF6D00; margin-bottom: 12px; border-bottom: 2px solid #FFF3E0; padding-bottom: 8px; }
+        h3 { font-size: 18px; color: #37474F; margin-bottom: 12px; border-left: 6px solid #FF6D00; padding-left: 10px; }
+        p { margin-bottom: 12px; font-size: 14px; }
+        .text-bold { font-weight: bold; }
+        .text-teal { color: #00BFA5; }
+        .text-orange { color: #FF6D00; }
+        .text-red { color: #D32F2F; }
+
+        /* --- CHART STYLES --- */
+        canvas { width: 100%; height: 100%; display: block; }
+        .chart-wrapper { position: relative; height: 250px; width: 100%; margin-bottom: 16px; background-color: #FAFAFA; border-radius: 8px; overflow: hidden; }
+        .card-stat { background-color: #E0F2F1; padding: 16px; border-radius: 12px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .stat-number { font-size: 32px; font-weight: 900; color: #00BFA5; line-height: 1; }
+        .scroll-cards { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
+        .mini-card { min-width: 130px; flex: 1; padding: 12px; border-radius: 8px; font-size: 12px; }
+        .bg-orange-light { background: #FFF3E0; border-left: 4px solid #FF6D00; }
+        .bg-red-light { background: #FFEBEE; border-left: 4px solid #D32F2F; }
+        .bg-teal-light { background: #E0F2F1; border-left: 4px solid #00BFA5; }
+        
+        /* Legend */
+        .legend-container { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+        .legend-item { display: flex; align-items: center; gap: 12px; font-size: 13px; padding: 8px; background: #FAFAFA; border-radius: 8px; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0; }
+        .legend-text { flex: 1; }
+        .legend-percent { font-weight: bold; color: #555; }
+
+        /* --- ACCORDION PROTOCOL --- */
+        .step-container { display: flex; flex-direction: column; gap: 16px; }
+        
+        .step-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        
+        .step-header {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Active State */
+        .step-card.active {
+            border-color: #FF6D00;
+            transform: translateY(-2px);
+        }
+        .step-card.active .step-header {
+            background-color: #FFF3E0;
+        }
+        .step-card.active .step-toggle-text {
+            color: #E65100;
+        }
+
+        .step-icon { font-size: 28px; }
+        .step-main-content { flex: 1; }
+        .step-title { font-weight: bold; font-size: 16px; color: #333; }
+        .step-desc { font-size: 12px; color: #666; margin: 0; }
+        .step-badge { 
+            font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; white-space: nowrap; 
+            background: #eee; color: #555;
+        }
+        
+        /* Tap Hint */
+        .step-toggle-bar {
+            background: #FAFAFA;
+            padding: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #999;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        /* Details Area */
+        .step-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+            background-color: white;
+        }
+        
+        .step-card.active .step-details {
+            max-height: 600px; /* Allow enough height */
+        }
+
+        .detail-inner {
+            padding: 20px;
+            font-size: 14px;
+            background: #fff;
+            border-top: 1px solid #FFE0B2;
+        }
+        
+        .detail-block {
+            margin-bottom: 16px;
+            background: #F9F9F9;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .detail-block:last-child { margin-bottom: 0; }
+        
+        .detail-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .head-ok { color: #00BFA5; }
+        .head-ng { color: #D32F2F; }
+        .detail-text { font-size: 13px; line-height: 1.5; color: #444; }
+
+        .arrow-down-divider { text-align: center; color: #FF6D00; font-size: 24px; line-height: 1; opacity: 0.3; margin: -8px 0; }
+
+        /* --- AI SECTION --- */
+        .ai-section { background: linear-gradient(135deg, #FFF8E1 0%, #E0F2F1 100%); border: 2px solid #FF6D00; border-radius: 20px; padding: 20px; margin-top: 30px; }
+        .ai-tool { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 16px; }
+        .ai-header { padding: 12px 16px; color: white; }
+        .ai-header.teal { background-color: #00BFA5; }
+        .ai-header.orange { background-color: #FF6D00; }
+        .ai-body { padding: 16px; }
+        textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; resize: none; background: #FAFAFA; margin-bottom: 12px; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; }
+        .btn.teal { background-color: #00BFA5; }
+        .btn.orange { background-color: #FF6D00; }
+        .result-box { margin-top: 16px; padding: 16px; border-radius: 8px; font-size: 13px; line-height: 1.6; display: none; background: white; border: 1px solid #eee; }
+        
+        /* Modal & Icons */
+        .settings-icon { font-size: 24px; background:none; border:none; color:white; cursor:pointer; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-card { background: white; width: 90%; max-width: 400px; padding: 24px; border-radius: 16px; }
+        .hidden { display: none !important; }
+        .spinner { border: 3px solid rgba(0,0,0,0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: #FF6D00; animation: spin 0.8s linear infinite; margin: 0 auto; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-content">
+            <div class="header-title">👶 2歳児のイヤイヤ期攻略</div>
+            <button onclick="toggleSettings()" class="settings-icon">⚙️</button>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- Intro -->
+        <div class="section">
+            <h2>魔の2歳児？</h2>
+            <p>「イヤイヤ期」は成長の証です。でも親の忍耐力は限界...。データとAIで、この嵐を乗り越えるヒントを見つけましょう。</p>
+            <div class="card-stat">
+                <div class="stat-number">92%</div>
+                <div style="font-size:12px; font-weight:bold; color:#555; text-align:left;">の保護者が<br>経験アリ</div>
+            </div>
+        </div>
+
+        <!-- LINE CHART -->
+        <div class="section">
+            <h3>いつ始まって、いつ終わる？</h3>
+            <div class="chart-wrapper">
+                <canvas id="canvasTimeline"></canvas>
+            </div>
+            <div class="scroll-cards">
+                <div class="mini-card bg-orange-light"><div class="text-bold text-orange">1歳後半</div>こだわり開始</div>
+                <div class="mini-card bg-red-light"><div class="text-bold text-red">2歳 ピーク</div>激しい拒絶</div>
+                <div class="mini-card bg-teal-light"><div class="text-bold text-teal">3歳〜 沈静</div>言葉で解決</div>
+            </div>
+        </div>
+
+        <!-- DONUT CHART (Labelled) -->
+        <div class="section grid-2">
+            <div>
+                <h3>なぜ泣き叫ぶ？</h3>
+                <!-- Chart -->
+                <div class="chart-wrapper" style="height:200px;">
+                    <canvas id="canvasCause"></canvas>
+                </div>
+                <!-- Legend -->
+                <div class="legend-container">
+                    <div class="legend-item"><div class="legend-color" style="background:#FF6D00;"></div><div class="legend-text"><span class="text-bold">自立心の芽生え</span><div style="font-size:11px; color:#666;">「自分でやりたい！」という強い衝動</div></div><div class="legend-percent">35%</div></div>
+                    <div class="legend-item"><div class="legend-color" style="background:#FFB74D;"></div><div class="legend-text"><span class="text-bold">うまくできない葛藤</span><div style="font-size:11px; color:#666;">能力が追いつかないもどかしさ</div></div><div class="legend-percent">25%</div></div>
+                    <div class="legend-item"><div class="legend-color" style="background:#00BFA5;"></div><div class="legend-text"><span class="text-bold">生理的要因</span><div style="font-size:11px; color:#666;">眠い、お腹すいた、痛いなど</div></div><div class="legend-percent">20%</div></div>
+                    <div class="legend-item"><div class="legend-color" style="background:#B0BEC5;"></div><div class="legend-text"><span class="text-bold">その他</span><div style="font-size:11px; color:#666;">環境の変化、伝えられないイライラ</div></div><div class="legend-percent">20%</div></div>
+                </div>
+            </div>
+            
+            <div>
+                <h3>脳内メカニズム</h3>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; gap:10px;"><div style="background:#FF6D00; color:white; width:20px; height:20px; border-radius:50%; text-align:center; font-size:12px;">1</div><div><div class="text-bold">欲求</div><div style="font-size:12px;">「自分で！」という衝動。</div></div></div>
+                    <div style="display:flex; gap:10px;"><div style="background:#FF6D00; color:white; width:20px; height:20px; border-radius:50%; text-align:center; font-size:12px;">2</div><div><div class="text-bold">限界</div><div style="font-size:12px;">手足や言葉がついてこない。</div></div></div>
+                    <div style="display:flex; gap:10px;"><div style="background:#D32F2F; color:white; width:20px; height:20px; border-radius:50%; text-align:center; font-size:12px;">3</div><div><div class="text-bold text-red">暴走</div><div style="font-size:12px;">前頭葉（理性）が未熟で扁桃体が爆発。</div></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROTOCOL SECTION (FIXED LABELS) -->
+        <div style="background:#37474F; color:white; border-radius:16px; padding:20px; margin-top:24px;">
+            <h3 style="color:#FF6D00; border:none; padding:0; text-align:center; margin-bottom:4px;">緊急時対応プロトコル</h3>
+            <p style="text-align:center; color:#ccc; font-size:12px; margin-bottom:20px;">外出先で大爆発した時のロジカル対処</p>
+            
+            <div class="step-container">
+                <!-- Step 1 -->
+                <div class="step-card" onclick="toggleStep(this)">
+                    <div class="step-header">
+                        <div class="step-icon">🛑</div>
+                        <div class="step-main-content"><div class="step-title">安全確保</div><p class="step-desc">まずは物理的に移動させる</p></div>
+                        <div class="step-badge" style="background:#FFEBEE; color:#D32F2F;">Step 1</div>
+                    </div>
+                    <div class="step-toggle-bar">▼ タップで詳細を開く</div>
+                    <div class="step-details">
+                        <div class="detail-inner">
+                            <div class="detail-block">
+                                <div class="detail-head head-ok">✅ 具体的な行動</div>
+                                <div class="detail-text">人目は無視してOKです。駐車場や道路など、怪我の危険がある場所からは、泣き叫んでいても抱きかかえて「強制的に」安全な場所へ移動します。</div>
+                            </div>
+                            <div class="detail-block">
+                                <div class="detail-head head-ng">❎ NG行動</div>
+                                <div class="detail-text">その場で「周りに迷惑でしょ！」と説教を始めること。通行人に謝ることに集中して子供から目を離すこと。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="arrow-down-divider">▼</div>
+
+                <!-- Step 2 -->
+                <div class="step-card" onclick="toggleStep(this)">
+                    <div class="step-header">
+                        <div class="step-icon">👂</div>
+                        <div class="step-main-content"><div class="step-title">受容（共感）</div><p class="step-desc">感情を否定せずに受け止める</p></div>
+                        <div class="step-badge" style="background:#E0F2F1; color:#00BFA5;">Step 2</div>
+                    </div>
+                    <div class="step-toggle-bar">▼ タップで詳細を開く</div>
+                    <div class="step-details">
+                        <div class="detail-inner">
+                            <div class="detail-block">
+                                <div class="detail-head head-ok">✅ 具体的な声掛け例</div>
+                                <div class="detail-text">「帰りたくなかったね」「まだ遊びたかったね」「悔しかったね」<br>子供の気持ちを代弁（オウム返し）します。背中をトントンするのも有効です。</div>
+                            </div>
+                            <div class="detail-block">
+                                <div class="detail-head head-ng">❎ NG行動</div>
+                                <div class="detail-text">「どうしてそんなこと言うの？（理由を問う）」「泣き止みなさい！（命令）」<br>※この時期の脳は理屈を理解できません。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down-divider">▼</div>
+
+                <!-- Step 3 -->
+                <div class="step-card" onclick="toggleStep(this)">
+                    <div class="step-header">
+                        <div class="step-icon">⏳</div>
+                        <div class="step-main-content"><div class="step-title">待つ</div><p class="step-desc">脳の再起動までタイムアウト</p></div>
+                        <div class="step-badge" style="background:#FFF3E0; color:#FF6D00;">Step 3</div>
+                    </div>
+                    <div class="step-toggle-bar">▼ タップで詳細を開く</div>
+                    <div class="step-details">
+                        <div class="detail-inner">
+                            <div class="detail-block">
+                                <div class="detail-head head-ok">✅ 親の行動</div>
+                                <div class="detail-text">脳内の興奮物質が収まるまで数分かかります。親は「無」になり、深呼吸をして嵐が過ぎるのを待ちます。安全なら少し離れて見守るのもアリです。</div>
+                            </div>
+                            <div class="detail-block">
+                                <div class="detail-head head-ng">❎ NG行動</div>
+                                <div class="detail-text">「もう知らない！」「置いていくよ！（脅し）」<br>これらは火に油を注ぎ、癇癪を長引かせるだけです。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down-divider">▼</div>
+
+                <!-- Step 4 -->
+                <div class="step-card" onclick="toggleStep(this)">
+                    <div class="step-header">
+                        <div class="step-icon">🌈</div>
+                        <div class="step-main-content"><div class="step-title">切り替え</div><p class="step-desc">全く別の話題で誘導</p></div>
+                        <div class="step-badge" style="background:#E3F2FD; color:#1976D2;">Step 4</div>
+                    </div>
+                    <div class="step-toggle-bar">▼ タップで詳細を開く</div>
+                    <div class="step-details">
+                        <div class="detail-inner">
+                            <div class="detail-block">
+                                <div class="detail-head head-ok">✅ 具体的な声掛け例</div>
+                                <div class="detail-text">少し落ち着いてきたら…<br>「あ！あそこにワンワンがいる！」「喉乾いたね、ジュース飲もうか？」と全く関係ない楽しい話題を振ります。</div>
+                            </div>
+                            <div class="detail-block">
+                                <div class="detail-head head-ng">❎ NG行動</div>
+                                <div class="detail-text">「さっきの約束守ってね」「もうやっちゃダメだよ」と蒸し返すこと。<br>子供は今の瞬間を生きています。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI TOOLS -->
+        <div class="ai-section">
+            <div style="text-align:center;">
+                <h3 style="color:#FF6D00; border:none; margin-bottom:4px;">✨ AI子育てアシスタント</h3>
+                <div id="apiKeyWarning" class="hidden" style="background:white; color:#D32F2F; font-size:11px; font-weight:bold; padding:4px 8px; border-radius:12px; display:inline-block; margin-top:4px;">⚠️ 設定からAPIキーを入力してください</div>
+            </div>
+
+            <div style="margin-top:20px;">
+                <div class="ai-tool">
+                    <div class="ai-header teal"><div class="text-bold">🗣️ イヤイヤ翻訳機</div></div>
+                    <div class="ai-body">
+                        <textarea id="translateInput" rows="3" placeholder="例：お風呂に入りたくなくて裸で逃げ回っている"></textarea>
+                        <button onclick="callGeminiTranslator()" class="btn teal">翻訳する</button>
+                        <div id="translateResult" class="result-box"><div id="translateLoader" class="spinner hidden"></div><div id="translateContent"></div></div>
+                    </div>
+                </div>
+
+                <div class="ai-tool">
+                    <div class="ai-header orange"><div class="text-bold">🛡️ 神対応ジェネレーター</div></div>
+                    <div class="ai-body">
+                        <textarea id="adviceInput" rows="3" placeholder="例：スーパーで「買って！」と寝転がって叫ぶ"></textarea>
+                        <button onclick="callGeminiAdvice()" class="btn orange">作戦を生成</button>
+                        <div id="adviceResult" class="result-box"><div id="adviceLoader" class="spinner hidden"></div><div id="adviceContent"></div></div>
+                    </div>
+                </div>
+            </div>
+            <p style="text-align:center; font-size:10px; color:#999; margin-top:10px;">Powered by Gemini 2.5 Flash</p>
+        </div>
+
+        <div style="text-align:center; padding:30px 20px; font-size:12px; color:#999;"><p>© 2025 Offline-Ready & Fully Detailed</p></div>
+
+    </main>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3 style="border:none; margin:0; padding:0;">⚙️ API設定</h3>
+                <button onclick="toggleSettings()" style="background:none; border:none; font-size:24px; color:#999;">&times;</button>
+            </div>
+            <p style="font-size:12px; color:#666; margin-bottom:16px;">AI機能を使うにはGemini APIキーが必要です。</p>
+            <input type="password" id="userApiKeyInput" placeholder="AIzaSy..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; margin-bottom:16px;">
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button onclick="clearApiKey()" style="background:none; border:none; color:#D32F2F; font-size:12px;">削除</button>
+                <button onclick="saveApiKey()" style="background:#FF6D00; color:white; border:none; padding:8px 16px; border-radius:6px; font-weight:bold;">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ACCORDION LOGIC ---
+        function toggleStep(card) {
+            // Close others (Optional, uncomment if you want only one open)
+            // document.querySelectorAll('.step-card').forEach(c => { if(c !== card) c.classList.remove('active'); });
+            card.classList.toggle('active');
+        }
+
+        // --- GRAPHICS ENGINE ---
+        function setupCanvas(id) {
+            const canvas = document.getElementById(id);
+            const parent = canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+            const rect = parent.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+            return { ctx, width: rect.width, height: rect.height };
+        }
+
+        function drawLineChart() {
+            const { ctx, width, height } = setupCanvas('canvasTimeline');
+            const data = [10, 40, 95, 80, 50, 30, 15];
+            const labels = ['1歳', '1.5', '2歳', '2.5', '3歳', '3.5', '4歳'];
+            const padding = 30;
+            const chartW = width - padding * 2;
+            const chartH = height - padding * 2;
+            const maxVal = 100;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+            ctx.moveTo(padding, height - padding); ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#FF6D00'; ctx.lineWidth = 3;
+            const points = [];
+            data.forEach((val, i) => {
+                const x = padding + (chartW / (data.length - 1)) * i;
+                const y = (height - padding) - (val / maxVal) * chartH;
+                points.push({x, y});
+                if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+            ctx.lineTo(points[points.length-1].x, height - padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 109, 0, 0.1)';
+            ctx.fill();
+
+            points.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.fillStyle = 'white'; ctx.strokeStyle = '#FF6D00'; ctx.lineWidth = 2;
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#666'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(labels[i], p.x, height - padding + 15);
+            });
+        }
+
+        function drawDonutChart() {
+            const { ctx, width, height } = setupCanvas('canvasCause');
+            const data = [35, 25, 20, 20];
+            const colors = ['#FF6D00', '#FFB74D', '#00BFA5', '#B0BEC5'];
+            const total = data.reduce((a, b) => a + b, 0);
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 - 20;
+            let start = -Math.PI / 2;
+
+            data.forEach((val, i) => {
+                const slice = (val / total) * 2 * Math.PI;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, start, start + slice);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                start += slice;
+            });
+            ctx.beginPath(); ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white'; ctx.fill();
+        }
+
+        window.onload = function() { setTimeout(() => { drawLineChart(); drawDonutChart(); }, 100); };
+        window.onresize = function() { drawLineChart(); drawDonutChart(); }
+
+        // --- AI LOGIC ---
+        function toggleSettings() {
+            const m = document.getElementById('settingsModal');
+            m.classList.toggle('active');
+            if(m.classList.contains('active')){ const k = localStorage.getItem('gemini_api_key'); if(k) document.getElementById('userApiKeyInput').value = k; }
+        }
+        function saveApiKey() { const k = document.getElementById('userApiKeyInput').value.trim(); if(k){ localStorage.setItem('gemini_api_key', k); alert('保存しました'); toggleSettings(); document.getElementById('apiKeyWarning').classList.add('hidden'); } }
+        function clearApiKey() { localStorage.removeItem('gemini_api_key'); document.getElementById('userApiKeyInput').value=''; alert('削除しました'); toggleSettings(); }
+        function getApiKey() { return localStorage.getItem('gemini_api_key'); }
+
+        async function callGemini(prompt, sys, outId, loadId, resId) {
+            const key = getApiKey();
+            if(!key) { document.getElementById('apiKeyWarning').classList.remove('hidden'); toggleSettings(); return; }
+            
+            const resDiv = document.getElementById(resId);
+            const load = document.getElementById(loadId);
+            const out = document.getElementById(outId);
+            
+            resDiv.style.display = 'block';
+            load.classList.remove('hidden');
+            out.innerHTML = '';
+            
+            try {
+                const req = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`, {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({contents:[{parts:[{text:prompt}]}], systemInstruction:{parts:[{text:sys}]}})
+                });
+                const data = await req.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "エラー";
+                if (typeof marked !== 'undefined') out.innerHTML = marked.parse(text); else out.innerText = text;
+            } catch(e) { out.innerText = "通信エラー"; } finally { load.classList.add('hidden'); }
+        }
+        function callGeminiTranslator() {
+            const v = document.getElementById('translateInput').value;
+            if(!v) return alert('入力してください');
+            callGemini(`状況: ${v}。心の声を翻訳して。`, "あなたは2歳児の代弁者です。", 'translateContent', 'translateLoader', 'translateResult');
+        }
+        function callGeminiAdvice() {
+            const v = document.getElementById('adviceInput').value;
+            if(!v) return alert('入力してください');
+            callGemini(`状況: ${v}。対応策を教えて。`, "専門家として3ステップでアドバイスしてください。", 'adviceContent', 'adviceLoader', 'adviceResult');
+        }
+    </script>
+</body>
+</html>
